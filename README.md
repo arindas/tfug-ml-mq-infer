@@ -1,4 +1,6 @@
-# Message Queues: Function and role in ML inference
+<p align="center">
+<h1 align="center">Message Queues: Function and Role in ML Inference</h1>
+</p>
 
 ## Introduction
 
