@@ -1,4 +1,4 @@
-# Message Queues and their role in Machine Learning Inference
+# Message Queues: Function and role in ML inference
 
 ## Intro to Message Queues
 
@@ -28,7 +28,7 @@ In the 21st century, we have the following additional requirements:
 Message queues in the 21st century are queues of "message" elements, and they
 fulfil the above requirements.
 
-## Message Queues' usage
+## Usage model
 
 In the conventional client server model, the client makes synchronous requests
 to the server, which responds back with a synchronous response.
@@ -106,7 +106,7 @@ consider the following scenario:
 >medicine on their crops. They isolate the farm into two areas, the control area
 >where no medicine is used and the active area where the newly developed medicine
 >is tested out. They decide on a uniform medicine distribution quantity, let's
->say 270 ml/sqft.
+>say 120 ml/sqft.
 >
 >Now they employ a fleet of drones to regularly take images of the plants in the
 >farm in both the control and active areas to keep track of the health of the
@@ -137,3 +137,155 @@ with the area covered by each type.
 However that is an ideal case. The machine learning engineers only have the
 following datasets:
 - Leaf object detection dataset
+- Disease grade classification for 5 diseases (the grades correspond to
+severity)
+
+There are no sufficiently large annotated semantic segmentation dataset that
+can be used for production purposes. (Let's say, for this scenario.)
+
+### Solution Architecture
+
+The machine learning engineers provide the following models:
+- A leaf object detector
+- 5 disease grade classifier models. Each disease grade classifier models has 4
+  classes.
+
+The software engineers design the solution with a suite of micro-services and
+drone controllers which communicate with each other using the message queue. The
+various components of the system are described below:
+
+#### Drone Image Collector
+
+The drone moves to specific position clicks an image, and uploads it to an
+S3/GCS bucket at a specific path. Each drone position has a unique identifier.
+The image path could be of the form:
+
+```
+s3://${STORAGE_BUCKET}/${position_id}/${date}/image.png
+```
+
+Next the drone controller produces a message on the "drone_image" topic. The
+message simply contains the S3 image object path.
+
+(We assume that the drones are equipped with some form of internet
+connectivity.)
+
+(In the following section, when I say that a components consumes a message, if
+the message contains an image url, assume that the component also downloads the
+image from the url to it's local storage.
+
+Also the service might be use a shared persistent storage service to avoid
+hitting S3 every time.)
+
+#### Leaf image cropper
+
+The leaf image cropper crops out the leaves from the drone image using the leaf
+object detection model.
+
+The leaf object detection is model is served with a model serving solution like
+"Tensorflow serving" or "PyTorch serve". The model serving solution provides the
+model inference at specific HTTP or gRPC endpoint.
+
+The leaf image cropper has a consumer to consume drone image from the
+"drone_image" topic. It then perform inference with the HTTP or gRPC endpoint
+served by the model serving solution and obtains all the bounding boxes. It then
+uses bounding boxes to crop out the leaves. 
+
+For each cropped out leaf:
+- A new cropped leaf image is created. It is uploaded to:
+```
+s3://${STORAGE_BUCKET}/${position_id}/${date}/leaves/${leaf_crop_idx}.png
+```
+- It produces a message on the "cropped_leaf" topic. The message contains the
+above S3 image object path.
+
+#### Disease demultiplexer service
+
+This service simply consumes a message from the "cropped_leaf" and produces it
+on each of the 5 disease grader topics "disease_0", "disease_1", ...,
+"disease_4".
+
+This service might not be necessary in some message queues where they provide
+utilities to do this automatically.
+
+#### Individual disease grader services
+
+Each disease has 4 grades with 0 for healthy and 4 for most severe.
+
+A disease grader service uses it's corresponding disease grading model to grade
+the severity of the cropped leaf for the corresponding disease.
+
+The "disease_#n" grader model is served with a model serving solution like
+"Tensorflow serving" or "PyTorch serve". The model serving solution provides the
+model inference at specific HTTP or gRPC endpoint.
+
+A disease grader service consumes a cropped leaf image from it's corresponding
+input topic, performs inference with the HTTP or gRPC endpoint exposed by the
+model serving solution, and writes a record with the following schema to a
+database:
+
+```
+{
+  position_id: …, // drone position on field
+  date: …, // date on which image was taken
+  leaf_crop_idx: …, // leaf crop index from leaf crops with obj. det. model
+  disease_type: …, // disease grader disease type
+  predicted_grade: …, // predicted disease severity grade
+  model_used: …, // model used for predicting disease
+  model_version: …, // vesion of the model used
+}
+```
+
+#### Analysis Service
+
+This service runs DB analytical queries to produce updated dashboards and
+reports for stakeholders in this undertaking. This service runs at regular
+intervals daily.
+
+The results of frequently used analytical queries are cached to minimize waiting
+times.
+
+#### Audits and Reproducibility
+
+You might have observed that we also store the model id and iteration with each
+record. This is necessary if we need to re-analyze with different versions of
+different models.
+
+We can regenerate all the messages by walking over the contents of the message
+queue and the system will perform inference as necessary. However, some message
+queues (like Apache Kafka) also allow you to replay messages.
+
+For instance, consider we updated the model for "disease_3" and we want to
+re-analyze the images. We may simply replay the messages in the topic for
+"disease_3" along with new model config for the corresponding disease grader
+service. This will produce new disease inference records with the appropriate
+model details.
+
+#### Scaling up horizontally
+
+Now as discussed toward the start of the talk, individual services can be
+horizontally scaled easily. In our scenario the object detection service could
+using a model like MobileNet which has faster inference times, but the classifier
+service might be using a UNet for classification which has slower inference
+times.
+
+In this case based on the requirements we can scale up the affected service as
+necessary. Now since the web component and the actual model serving solution
+communicate over the network, they could be scale up independently if necessary.
+
+For instance, we might not choose to scale up the web component of a disease
+grader service, but we can increase the number of model replicas in the model
+serving solution instead (PyTorch serve for instance.) Also it is not necessary
+that the web components each have their unique instance of the model serving
+solution. They could all make requests to shared model serving solution
+instance.
+
+#### Support for multiple environments
+
+Now in this design itself, there is not strict requirement to specify that the
+services are containers, pod in k8s or simple linux processes. As long as they
+communicate with each other on the message queue, it doesn't matter where they
+run.
+
+This approach in turn allows us to pursue multi-cloud architectures where some
+components could be running on AWS, some on GCP some on Azure and so on.
