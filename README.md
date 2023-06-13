@@ -6,7 +6,12 @@ Let's first talk a bit about message queues.
 
 We see the word "queue" in it, why?
 
-![queue-diagram](/some/url)
+<p align="center">
+<img src="./assets/queue.drawio.png" alt="queue-diagram" />
+</p>
+<p align="center">
+<b>Fig:</b> a First In First Out (FIFO) queue.
+</p>
 
 A queue is a first in first out data-structure for storing a set of elements.
 
@@ -28,16 +33,37 @@ In the 21st century, we have the following additional requirements:
 Message queues in the 21st century are queues of "message" elements, and they
 fulfil the above requirements.
 
-## Usage model
+## Message queue usage model
+
+### Background: `Client - Server` model
+
+Let us first discuss how we work without message queues.
 
 In the conventional client server model, the client makes synchronous requests
 to the server, which responds back with a synchronous response.
 
-![client-server-model](/some/url)
+<p align="center">
+<img src="./assets/client-server-model.drawio.png" alt="client-server-model" />
+</p>
+<p align="center">
+<b>Fig:</b> Client - Server model.
+</p>
 
-What happens when we have too many clients that the server can't handle at once?
+What happens when we have too many clients that the server can't handle at
+once?
 
-![client-server-model-overwhelmed](/some/url)
+<p align="center">
+<img src="./assets/client-server-model-overwhelmed.drawio.png" alt="client-server-model-overwhelmed" />
+</p>
+<p align="center">
+<b>Fig:</b> Client - Server model overhelmed with too many clients for the server to handle.
+</p>
+
+The server is simply unable to service all the client within a reasonable time.
+Either the requests time out completely, or the server starts refusing
+connections when the maximum number of connections is reached.
+
+### Message Queue
 
 Message queues enable asynchronous handling of requests.
 
@@ -104,17 +130,17 @@ consider the following scenario:
 >
 >In order to to do this, the company partners with a farm owner to test out the
 >medicine on their crops. They isolate the farm into two areas, the control area
->where no medicine is used and the active area where the newly developed medicine
->is tested out. They decide on a uniform medicine distribution quantity, let's
->say 120 ml/sqft.
+>where no medicine is used and the active area where the newly developed
+>medicine is tested out. They decide on a uniform medicine distribution
+>quantity, let's say 120 ml/sqft.
 >
 >Now they employ a fleet of drones to regularly take images of the plants in the
 >farm in both the control and active areas to keep track of the health of the
 >plants. The drones take photographs of the plants in the farm at regular
 >distances to cover the entire farm. The trajectory of the drones are
->preprogrammed in such way that each drones always take photographs at some 
->specific positions (marked by GPS) and each photograph contains a maximum of 
->20 leaves. The drones take photographs at regular time intervals (e.g daily)
+>preprogrammed in such way that each drones always take photographs at some
+>specific positions (marked by GPS) and each photograph contains a maximum of 20
+>leaves. The drones take photographs at regular time intervals (e.g daily)
 >
 >(The plants are in a green house. They don't move around a lot due to absence
 >of wind)
