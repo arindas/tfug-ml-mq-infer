@@ -288,4 +288,5 @@ communicate with each other on the message queue, it doesn't matter where they
 run.
 
 This approach in turn allows us to pursue multi-cloud architectures where some
-components could be running on AWS, some on GCP some on Azure and so on.
+components could be running on AWS, some on GCP some on Azure and so on. At the
+same time, this entire system could simply run on just a beefy laptop.
