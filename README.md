@@ -37,7 +37,7 @@ fulfil the above requirements.
 
 ## Message queue usage model
 
-### Background: `Client - Server` model
+### Background: Client Server model
 
 Let us first discuss how we work without message queues.
 
@@ -65,13 +65,22 @@ The server is simply unable to service all the client within a reasonable time.
 Either the requests time out completely, or the server starts refusing
 connections when the maximum number of connections is reached.
 
-### Message Queue
+### Message Queue: Asynchronous processing
 
 Message queues enable asynchronous handling of requests.
+
+![asynchronous-processing](/some/url0)
+
+Asynchronous processing allows the server to actually handle all the requests
+without timing out or refusing connections. However in this case, the responses
+are available later at a different time, as opposed to client - server model
+where responses are available synchronously.
 
 However, this is not the only thing that message queues are good at. Message
 queues also enable large scale request handling with _multiple stages_, and
 _horizontal scaling_ at each stage. But how?
+
+### Message Queue: Multi-stage horizontally scalable asynchronous processing
 
 ![multi-stage-process-diagram](/some/url0)
 
