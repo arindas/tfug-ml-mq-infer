@@ -194,7 +194,7 @@ uses bounding boxes to crop out the leaves.
 For each cropped out leaf:
 - A new cropped leaf image is created. It is uploaded to:
 ```
-s3://${STORAGE_BUCKET}/${position_id}/${date}/leaves/${leaf_crop_idx}.png
+s3://${STORAGE_BUCKET}/${position_id}/${date}/${cropper-model-id}/${cropper-model-version}/${leaf_crop_idx}.png
 ```
 - It produces a message on the "cropped_leaf" topic. The message contains the
 above S3 image object path.
@@ -231,8 +231,10 @@ database:
   leaf_crop_idx: …, // leaf crop index from leaf crops with obj. det. model
   disease_type: …, // disease grader disease type
   predicted_grade: …, // predicted disease severity grade
-  model_used: …, // model used for predicting disease
-  model_version: …, // vesion of the model used
+  cropper_model_id: …, // model used for cropping
+  cropper_model_version: … // version of cropper model used
+  disease_model_id: …, // model used for predicting disease
+  disease_model_version: …, // version of the disease predictor model used
 }
 ```
 
@@ -247,7 +249,7 @@ times.
 
 #### Audits and Reproducibility
 
-You might have observed that we also store the model id and iteration with each
+You might have observed that we also store the model id and version with each
 record. This is necessary if we need to re-analyze with different versions of
 different models.
 
