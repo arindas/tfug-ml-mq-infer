@@ -112,9 +112,9 @@ consider the following scenario:
 >farm in both the control and active areas to keep track of the health of the
 >plants. The drones take photographs of the plants in the farm at regular
 >distances to cover the entire farm. The trajectory of the drones are
->preprogrammed in such way that each drones always take photographs at the same
->position (marked by GPS) and each photograph contains a maximum of 20 leaves.
->The drones take photographs at regular time intervals.
+>preprogrammed in such way that each drones always take photographs at some 
+>specific positions (marked by GPS) and each photograph contains a maximum of 
+>20 leaves. The drones take photographs at regular time intervals (e.g daily)
 >
 >(The plants are in a green house. They don't move around a lot due to absence
 >of wind)
