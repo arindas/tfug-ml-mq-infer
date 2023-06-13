@@ -1,6 +1,6 @@
 # Message Queues: Function and role in ML inference
 
-## Intro to Message Queues
+## Introduction
 
 Let's first talk a bit about message queues.
 
