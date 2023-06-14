@@ -127,6 +127,51 @@ Message published to the topic are load balanced across all the subscriptions.
 >Some also call this event driven architecture, with the individual messages
 >being "event"(s)
 
+## Why use message queues instead of Databases?
+
+Why don't we use different tables for representing topics? Each row could
+be a message. We could use a partitioning function like modulus to partition the
+topic for horizontal scaling.
+
+You can indeed do this, some production systems use databases instead of message
+queues in this manner.
+
+However message queues have some advantages over traditional data bases:
+- Message queues use different data structures for storage and indexing. Message
+queues use segmented_log(s), while traditional databases use data-structures
+from the B-Tree family
+  - segmented_log(s) guarantee O(1) insertions / writes. B-Tree have O(log n)
+  insertions.
+  - segmented_log(s) have far lesser number of memory indirections than
+  B-Tree(s) when simply sequentially iterating over the elements. (Tree have
+  multiple levels of pointer indirection). Higher number of indirections
+  increase the number of virtual memory page faults and decrease cache
+  locality.
+  - segmented_log(s) have higher disk page locality. This due to segmented_log's
+  append only nature where writes always go to the end of the files, which is
+  optimal for disk page cache.
+  - segmented_log(s) are highly optimized on SSDs due to it's sequential append
+  only nature
+  - in conclusion segmented_log(s) support much faster writes, while providing
+  competitive read speeds
+- (Modern database that are based on LSM trees have similar performance
+characteristics to segmented_log(s))
+- Message queues don't require a query parsing and execution layer for accessing
+messages.
+- Writes in databases often require transactions for atomicity and consistency
+guarantees. For distributed databases, there are distributed transactions with
+sophisticated protocols like two phase commit. Message queues can rely on
+consensus algorithms like Raft and Paxos for consistency between replicas, which
+are simpler in practice.
+- Message queues have been explicitly designed for to provide queue like
+semantics. One has to build additional abstractions over databases to obtain
+message queue like behaviour.
+
+However, the gaps between message queues and databases are gradually decreasing.
+Apache Kafka now provides an SQL like query layer for stream analytics.
+In-memory key value stores (databases) like Redis also provide message queue
+abstractions out of the box.
+
 ## Case Study: Plant medicine effectiveness on Crops
 
 Remember that this talk was actually about Machine Learning inference with
