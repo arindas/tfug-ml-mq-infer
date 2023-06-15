@@ -134,7 +134,7 @@ Message published to the topic are load balanced across all the subscriptions.
 - Sychronous model: Requests are delivered to the server as soon as they arrive.
 If the server has enough resources to handle the requests, they are processed.
 Otherwise they are either delayed or dropped.
-- Asyncrhonous model: Requests are buffered as soon as they arrive. Then the
+- Asynchronous model: Requests are buffered as soon as they arrive. Then the
 server pulls a request from the buffered queue of requests when it has enough
 resources to handle the request. This improved the success rate of requests
 being handled successfully.
