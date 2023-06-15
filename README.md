@@ -95,7 +95,7 @@ Let's take the example of two popular message queues / messaging services:
 - Apache Kafka
 - Google Cloud Pub/Sub
 
-### Apache Kafka
+#### Apache Kafka
 
 In Apache Kafka, messages are organized by "topic"(s). Each "topic" is further
 broken down partitions. Messages in a partition are ordered and isolated from
@@ -120,7 +120,7 @@ horizontal scaling we do the following:
 - In order to horizontally scale up further, we increase the number of
   partitions and request handler instances.
 
-### Google Cloud Pub/Sub
+#### Google Cloud Pub/Sub
 
 Google Cloud Pub/Sub makes this a bit more simpler. There are "topic"(s) where
 messages are written to. Each "topic" can have a set of "subscription"(s). There
@@ -158,6 +158,17 @@ queues use segmented_log(s), while traditional databases use data-structures
 from the B-Tree family
   - segmented_log(s) guarantee O(1) insertions / writes. B-Tree have O(log n)
   insertions.
+  - segmented_log(s) can gurantee O(log |segments|) reads while B-Trees have 
+  O(log n) reads, where n is the total number of records and |segments| is the 
+  number of segments in the segmented_log. (Usually, n / |segments| >= 1000)
+    - This is possible since the segments are sorted by indices and given a record 
+    index, we can perform a binary search to check which segment has the record 
+    with the index, which would be O(log |segments|). Reading a specific index 
+    from a segment is O(1). 
+    - If we can gurantee constant record size (with padding) and constant max 
+    number of records per segment, we can provide O(1) reads for segmented_log(s).
+    This would be possible because determining which segment has the index would
+    also be a O(1) in this case.
   - segmented_log(s) have far lesser number of memory indirections than
   B-Tree(s) when simply sequentially iterating over the elements. (Tree have
   multiple levels of pointer indirection). Higher number of indirections
