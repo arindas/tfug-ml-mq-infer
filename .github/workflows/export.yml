@@ -1,0 +1,24 @@
+name: export
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+
+jobs:
+  export-to-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Respository
+        uses: actions/checkout@v2
+      - name: Export to pdf
+        run: |
+          npm i -g md-to-pdf
+          cat ./README.md | md-to-pdf > ./tfug-ml-mq-infer.pdf
+      - name: Archive PDF
+        uses: actions/upload-artifact@v2
+        with:
+          name: tfug-ml-mq-infer
+          path: ./tfug-ml-mq-infer.pdf
