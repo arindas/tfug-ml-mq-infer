@@ -69,7 +69,12 @@ connections when the maximum number of connections is reached.
 
 Message queues enable asynchronous handling of requests.
 
-![asynchronous-processing](/some/url0)
+<p align="center">
+<img src="./assets/async-processing.drawio.png" alt="async-processing" />
+</p>
+<p align="center">
+<b>Fig:</b> Asynchronous processing of requests with request and response queues.
+</p>
 
 Asynchronous processing allows the server to actually handle all the requests
 without timing out or refusing connections. However in this case, the responses
