@@ -3,11 +3,11 @@ stylesheet: https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/gi
 body_class: markdown-body
 css: |-
   .page-break { page-break-after: always; }
-  .markdown-body { font-size: 12px; }
+  .markdown-body { font-size: 11px; }
   .markdown-body pre > code { white-space: pre-wrap; }
 pdf_options:
   format: a4
-  margin: 15mm 15mm 
+  margin: 15mm 15mm
 ---
 
 <p align="center">
@@ -47,6 +47,8 @@ In the 21st century, we have the following additional requirements:
 Message queues in the 21st century are queues of "message" elements, and they
 fulfil the above requirements.
 
+<p style="page-break-before: always;">&nbsp;</p>
+
 ## Message queue usage model
 
 ### Background: Client Server model
@@ -78,6 +80,8 @@ Either the requests time out completely, or the server starts refusing
 connections when the maximum number of connections is reached. The server may
 also be also be configured with request rate limits where the server start
 dropping requests altogether if they arrive at a higher than expected rate.
+
+<p style="page-break-before: always;">&nbsp;</p>
 
 ### Message Queue: Asynchronous processing
 
@@ -123,7 +127,7 @@ it and writes the intermediate result to `topic_a_out_b_in` topic.
 
 You may also think of the `stage #a` and `stage #b` as two functions `a(x)` and
 `b(x)`, and we are essentially computing the composite function `b(a(x))` where
-`x` is the client input request. The only difference being: 
+`x` is the client input request. The only difference being:
 - The values are passed into the "function"(s) over the network via message
 queues
 - There is a queue of values `X = {x_0, x_1, ..}` to process.
@@ -131,7 +135,7 @@ queues
 The message queue is responsible for adequately load balancing the elements from
 the queue among all the replicas.
 
-Now in order to see, how this load balancing is done in practice, let's take a 
+Now in order to see, how this load balancing is done in practice, let's take a
 look at two popular message queuing solutions:
 - Apache Kafka
 - Google Cloud Pub/Sub
@@ -183,6 +187,7 @@ being handled successfully.
 >Some also call this event driven architecture, with the individual messages
 >being "event"(s)
 
+<p style="page-break-before: always;">&nbsp;</p>
 
 ## Why use message queues instead of Databases?
 
@@ -199,14 +204,14 @@ queues use segmented_log(s), while traditional databases use data-structures
 from the B-Tree family
   - segmented_log(s) guarantee O(1) insertions / writes. B-Tree have O(log n)
   insertions.
-  - segmented_log(s) can gurantee O(log |segments|) reads while B-Trees have 
-  O(log n) reads, where n is the total number of records and |segments| is the 
+  - segmented_log(s) can gurantee O(log |segments|) reads while B-Trees have
+  O(log n) reads, where n is the total number of records and |segments| is the
   number of segments in the segmented_log. (Usually, n / |segments| >= 1000)
-    - This is possible since the segments are sorted by indices and given a record 
-    index, we can perform a binary search to check which segment has the record 
-    with the index, which would be O(log |segments|). Reading a specific index 
-    from a segment is O(1). 
-    - If we can gurantee constant record size (with padding) and constant max 
+    - This is possible since the segments are sorted by indices and given a record
+    index, we can perform a binary search to check which segment has the record
+    with the index, which would be O(log |segments|). Reading a specific index
+    from a segment is O(1).
+    - If we can gurantee constant record size (with padding) and constant max
     number of records per segment, we can provide O(1) reads for segmented_log(s).
     This would be possible because determining which segment has the index would
     also be a O(1) in this case.
@@ -240,12 +245,16 @@ Apache Kafka now provides an SQL like query layer for stream analytics.
 In-memory key value stores (databases) like Redis also provide message queue
 abstractions out of the box.
 
-## Case Study: Plant medicine effectiveness on Crops
+<br/>
 
 Remember that this talk was actually about Machine Learning inference with
 message queues and not just about message queues. To illustrate how message
 queues might be used in a machine learning inference system in the real world,
-consider the following scenario:
+consider the following case study.
+
+<p style="page-break-before: always;">&nbsp;</p>
+
+## Case Study: Plant medicine effectiveness on Crops
 
 >An agricultural pharmacy company has come up with a new drug to cure various
 >plant diseases. Now, they wish to measure the effectiveness of their medicine.
@@ -274,18 +283,25 @@ consider the following scenario:
 
 Now take a look at this photograph:
 
-![disease-photo](https://media.istockphoto.com/id/483451251/photo/fungal-attack.jpg?s=612x612&w=0&k=20&c=PM0Lld99Io4DU6sRqemkytZUkuSF5effOJ8fhIAXwVo=)
+<p align="center">
+<img src="https://media.istockphoto.com/id/483451251/photo/fungal-attack.jpg?s=612x612&w=0&k=20&c=PM0Lld99Io4DU6sRqemkytZUkuSF5effOJ8fhIAXwVo=" alt="fungal-attack" />
+</p>
+<p align="center">
+<b>Fig:</b> A plant suffering from a fungal-attack.
+</p>
 
 Intuitively it makes sense that if the disease progresses, the disease affected
-area will spread. If it heals, the disease area will decrease.
+area will spread and increase. If it heals, the disease area will decrease.
 
 The excellent machine learning engineers in this room would agree that
 approaching this problem with semantic segmentation would be powerful. From a
 single image with multiple leaves, multiple disease types can be detected along
 with the area covered by each type.
 
-However that is an ideal case. The machine learning engineers only have the
-following datasets:
+However that is an ideal case. It is only possible if you have the required
+datasets.
+
+The machine learning engineers only have the following datasets:
 - Leaf object detection dataset
 - Disease grade classification for 5 diseases (the grades correspond to
 severity)
@@ -339,7 +355,7 @@ model inference at specific HTTP or gRPC endpoint.
 The leaf image cropper has a consumer to consume drone image from the
 "drone_image" topic. It then perform inference with the HTTP or gRPC endpoint
 served by the model serving solution and obtains all the bounding boxes. It then
-uses bounding boxes to crop out the leaves. 
+uses bounding boxes to crop out the leaves.
 
 For each cropped out leaf:
 - A new cropped leaf image is created. It is uploaded to:
@@ -451,10 +467,10 @@ at each layer and higher capacity for handling requests. These properties make
 them an excellent communication layer between different Machine Learning
 inference services.
 
-<br>
+<br/>
 
 #### License
 <sub>
-This document and all its figures are licensed under the 
+This document and all its figures are licensed under the
 <a href="./LICENSE">Creative Commons Zero v1.0 Universal</a> license.
 </sub>
