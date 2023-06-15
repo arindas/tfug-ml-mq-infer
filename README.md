@@ -430,3 +430,19 @@ run.
 This approach in turn allows us to pursue multi-cloud architectures where some
 components could be running on AWS, some on GCP some on Azure and so on. At the
 same time, this entire system could simply run on just a beefy laptop.
+
+## Conclusion
+
+Message Queues act as a general communication layer between different cooperating
+web services. They enable asynchronous processing of requests, horizontal scaling
+at each layer and higher capacity for handling requests. These properties make
+them an excellent communication layer between different Machine Learning
+inference services.
+
+<br>
+
+#### License
+<sub>
+This document and all its figures are licensed under the 
+<a href="./LICENSE">Creative Commons Zero v1.0 Universal</a> license.
+</sub>
