@@ -61,9 +61,11 @@ once?
 <b>Fig:</b> Client - Server model overhelmed with too many clients for the server to handle.
 </p>
 
-The server is simply unable to service all the client within a reasonable time.
+The server is simply unable to service all the clients within a reasonable time.
 Either the requests time out completely, or the server starts refusing
-connections when the maximum number of connections is reached.
+connections when the maximum number of connections is reached. The server may
+also be also be configured with request rate limits where the server start
+dropping requests altogether if they arrive at a higher than expected rate.
 
 ### Message Queue: Asynchronous processing
 
@@ -118,7 +120,6 @@ horizontal scaling we do the following:
 - In order to horizontally scale up further, we increase the number of
   partitions and request handler instances.
 
-
 ### Google Cloud Pub/Sub
 
 Google Cloud Pub/Sub makes this a bit more simpler. There are "topic"(s) where
@@ -128,9 +129,19 @@ multiple subscriptions from the topic.
 
 Message published to the topic are load balanced across all the subscriptions.
 
+### Primary distinction between synchronous and asynchronous request processing
+
+- Sychronous model: Requests are delivered to the server as soon as they arrive.
+If the server has enough resources to handle the requests, they are processed.
+Otherwise they are either delayed or dropped.
+- Asyncrhonous model: Requests are buffered as soon as they arrive. Then the
+server pulls a request from the buffered queue of requests when it has enough
+resources to handle the request. This improved the success rate of requests
+being handled successfully.
 
 >Some also call this event driven architecture, with the individual messages
 >being "event"(s)
+
 
 ## Why use message queues instead of Databases?
 
