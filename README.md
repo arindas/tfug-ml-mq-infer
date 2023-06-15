@@ -89,9 +89,38 @@ _horizontal scaling_ at each stage. But how?
 
 ### Message Queue: Multi-stage horizontally scalable asynchronous processing
 
-![multi-stage-process-diagram](/some/url0)
+<p align="center">
+<img src="./assets/multi-stage-processing.drawio.png" alt="multi-stage-processing" />
+</p>
+<p align="center">
+<b>Fig:</b> Multi-stage asynchornous horizontally scalable processing.
+</p>
 
-Let's take the example of two popular message queues / messaging services:
+In the above figure, we have to stages of computation `stage #a` and `stage #b`.
+There are two sets of servers for hosting these stages of computation. These two
+stages are connected to each other with message queue topics. This architecture
+works as follows:
+- Client pushes a message containing the input request to be processed into
+the first topic `topic_a_in`
+- The `stage #a` server pulls in messages from the `topic_a_in` topic, processes
+it and writes the intermediate result to `topic_a_out_b_in` topic.
+- The `stage #b` server pulls in intermeidate processed results from the
+`topic_a_out_b_in` topic, processes them and writes the final output to
+`topic_b_out` topic.
+- The client reads the results from the `topic_b_out` topic.
+
+You may also think of the `stage #a` and `stage #b` as two functions `a(x)` and
+`b(x)`, and we are essentially computing the composite function `b(a(x))` where
+`x` is the client input request. The only difference being: 
+- The values are passed into the "function"(s) over the network via message
+queues
+- There is a queue of values `X = {x_0, x_1, ..}` to process.
+- The invocation at every stage can be done in parallel with the stage replicas.
+The message queue is responsible for adequately load balancing the elements from
+the queue among all the replicas.
+
+Now in order to see, how this load balancing is done in practice, let's take a 
+look at two popular message queuing solutions:
 - Apache Kafka
 - Google Cloud Pub/Sub
 
