@@ -146,7 +146,12 @@ In Apache Kafka, messages are organized by "topic"(s). Each "topic" is further
 broken down partitions. Messages in a partition are ordered and isolated from
 messages in another partition.
 
-![topic-partition-hierarchy](/some/url)
+<p align="center">
+<img src="./assets/kafka-topic-partition.drawio.png" alt="topic-partition-hierarchy" />
+</p>
+<p align="center">
+<b>Fig:</b> Topics and partitions in Apache Kafka.
+</p>
 
 There are two kinds of clients for Apache Kafka: Producers and Consumers
 
