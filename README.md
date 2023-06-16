@@ -160,6 +160,13 @@ There are two kinds of clients for Apache Kafka: Producers and Consumers
   a particular partition or let Kafka load balance messages to a partition.
 - Consumers consume message from a particular partition under a topic.
 
+<p align="center">
+<img src="./assets/kafka-horizontal-scaling.drawio.png" alt="kafka-horizontal-scaling" />
+</p>
+<p align="center">
+<b>Fig:</b> Horizontally scaling a stage with Kafka partitions.
+</p>
+
 In our multistage computation example, each stage has input request and output
 responses. Let's assign a particular topic to a particular stage. To achieve
 horizontal scaling we do the following:
