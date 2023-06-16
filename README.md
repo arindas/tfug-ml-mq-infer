@@ -246,7 +246,7 @@ data-structures from the `B-Tree` family
     also be a _O(1)_ in this case.
     
 <p align="center">
-<img src="https://postgrespro.com/media/2019/05/23/i4_001.png" alt="B-Tree" />
+<img src="./assets/b-tree.png" alt="B-Tree" />
 </p>
 <p align="center">
 <b>Fig:</b> The <code>B-Tree</code> data-structure.
