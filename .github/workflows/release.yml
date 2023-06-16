@@ -31,6 +31,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./tfug-ml-mq-inder.pdf
+          asset_path: ./tfug-ml-mq-infer.pdf
           asset_name: tfug-ml-mq-infer.pdf
           asset_content_type: application/pdf
