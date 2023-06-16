@@ -36,15 +36,16 @@ However this definition doesn't tell us anything about:
 In the 21st century, we have the following additional requirements:
 - It has to be accessible over the internet over well known protocols (HTTP,
   gRPC etc.)
+- It might need to implement role base access control (RBAC)
 - It has to be persistent if necessary
 - It has to be replicated to be highly available.
 - All replicas need to be consistent with each other
 - It has to support multiple channels for different types of elements
 - It has to be reasonably fast
-- We can't be bothered to worry about these requirements. We are more worried
-  about business requirements
+- We can't be bothered about these requirements. We have business 
+requirements to worry about
 
-Message queues in the 21st century are queues of "message" elements, and they
+Message queues are queues of "message" elements, and they
 fulfil the above requirements.
 
 <p style="page-break-before: always;">&nbsp;</p>
@@ -205,45 +206,60 @@ queues in this manner.
 
 However message queues have some advantages over traditional data bases:
 - Message queues use different data structures for storage and indexing. Message
-queues use segmented_log(s), while traditional databases use data-structures
-from the B-Tree family
-  - segmented_log(s) guarantee O(1) insertions / writes. B-Tree have O(log n)
+queues use `segmented_log`(s), while traditional relational databases use 
+data-structures from the `B-Tree` family
+  - `segmented_log`(s) have _O(1)_ writes on average. B-Tree have _O(log n)_
   insertions.
-  - segmented_log(s) can gurantee O(log |segments|) reads while B-Trees have
-  O(log n) reads, where n is the total number of records and |segments| is the
-  number of segments in the segmented_log. (Usually, n / |segments| >= 1000)
+    - In segmented_log appending to the `write_segment` is _O(1)_
+    - When rotating the `write_segment`, `vector::push_back` on vector of read 
+    segments is _O(1)_ on average, _O(|read_segments|)_ at worst
+    (_|vec| = vec.len()_)
+    - Modern vector implementations ensure that the worst case of having
+    to copy all the elements when pushing back to end of the vector is very
+    rare. They may employ the following approaches:
+      - Exponential memory reservation when reserving more memory
+      - Maintaining multiple disjoint contiguous slabs of memory to avoid
+      having to copy elements when reserving more memory. New elements are
+      written to the last memory slab. This reduces worst case for push_back
+      to almost _O(1)_ on average. Reads are still _O(1)_ since the memory 
+      region for any index can be easily computed as all elements have same 
+      size and the regions are identical in size.
+  - `segmented_log`(s) can gurantee _O(log |segments|)_ reads while B-Trees have
+  _O(log n)_ reads, where n is the total number of records and _|segments|_ is the
+  number of segments in the segmented_log. (Usually, _(n / |segments|) >= 1000_)
     - This is possible since the segments are sorted by indices and given a record
     index, we can perform a binary search to check which segment has the record
-    with the index, which would be O(log |segments|). Reading a specific index
-    from a segment is O(1).
+    with the index, which would be _O(log |segments|)_. Reading a specific index
+    from a segment is _O(1)_.
     - If we can gurantee constant record size (with padding) and constant max
-    number of records per segment, we can provide O(1) reads for segmented_log(s).
+    number of records per segment, we can provide _O(1)_ reads for segmented_log(s).
     This would be possible because determining which segment has the index would
-    also be a O(1) in this case.
-  - segmented_log(s) have far lesser number of memory indirections than
-  B-Tree(s) when simply sequentially iterating over the elements. (Tree have
+    also be a _O(1)_ in this case.
+  - `segmented_log`(s) have far lesser number of memory indirections than
+  `B-Tree(s)` when simply sequentially iterating over the elements. (Tree have
   multiple levels of pointer indirection). Higher number of indirections
   increase the number of virtual memory page faults and decrease cache
   locality.
-  - segmented_log(s) have higher disk page locality. This due to segmented_log's
+  - `segmented_log`(s) have higher disk page locality. This due to segmented_log's
   append only nature where writes always go to the end of the files, which is
   optimal for disk page cache.
-  - segmented_log(s) are highly optimized on SSDs due to it's sequential append
-  only nature
-  - in conclusion segmented_log(s) support much faster writes, while providing
-  competitive read speeds
-- (Modern database that are based on LSM trees have similar performance
-characteristics to segmented_log(s))
+  - `segmented_log`(s) are highly optimized on SSDs due to it's sequential
+  append only write characteristics
+  - __In conclusion, `segmented_log`(s) support much faster writes and reads than
+  `B-Tree`(s), on average.__
+- Modern databases that are based on `LSM trees` (Google BigTable, Google Spanner,
+Cassandra, DynamoDB, TiKV, Redis) have similar performance characteristics to
+`segmented_log`(s)
 - Message queues don't require a query parsing and execution layer for accessing
 messages.
 - Writes in databases often require transactions for atomicity and consistency
 guarantees. For distributed databases, there are distributed transactions with
-sophisticated protocols like two phase commit. Message queues can rely on
-consensus algorithms like Raft and Paxos for consistency between replicas, which
-are simpler in practice.
-- Message queues have been explicitly designed for to provide queue like
-semantics. One has to build additional abstractions over databases to obtain
-message queue like behaviour.
+sophisticated protocols like two phase commit which blocks on failure. Message
+queues can rely on consensus algorithms like Raft and Paxos for consistency
+between replicas, which are non-blocking and more resilient to failures.
+- Message queues have been explicitly designed to provide queue like semantics.
+One has to build additional abstractions over databases to obtain message queue
+like behaviour.
 
 However, the gaps between message queues and databases are gradually decreasing.
 Apache Kafka now provides an SQL like query layer for stream analytics.
@@ -473,6 +489,8 @@ them an excellent communication layer between different Machine Learning
 inference services.
 
 <br/>
+
+---
 
 #### License
 <sub>
