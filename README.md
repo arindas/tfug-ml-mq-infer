@@ -368,6 +368,8 @@ drone controllers which communicate with each other using the message queue.
 
 The various components of the system are described in the following sections.
 
+<p style="page-break-before: always;">&nbsp;</p>
+
 #### Drone Image Collector
 
 The drone moves to specific position clicks an image, and uploads it to an
@@ -422,6 +424,8 @@ on each of the 5 disease grader topics "disease_0", "disease_1", ...,
 This service might not be necessary in some message queues where they provide
 utilities to do this automatically.
 
+<p style="page-break-before: always;">&nbsp;</p>
+
 #### Individual disease grader services
 
 Each disease has 4 grades with 0 for healthy and 4 for most severe.
@@ -452,14 +456,12 @@ database:
 }
 ```
 
-#### Analysis Service
+#### Data Analysis
 
-This service runs DB analytical queries to produce updated dashboards and
-reports for stakeholders in this undertaking. This service runs at regular
-intervals daily.
-
-The results of frequently used analytical queries are cached to minimize waiting
-times.
+Once we have the leaf disease prediction data, a competent Data Analyst can use
+different analytical queries to obtain insights about the efficiency of the
+medicine. There can also be an analytical service which runs in the background
+and recomputes a set of analytical queries to maintain a set of dashboards.
 
 #### Audits and Reproducibility
 
@@ -482,30 +484,31 @@ model details.
 Now as discussed toward the start of the talk, individual services can be
 horizontally scaled easily. In our scenario the object detection service could
 using a model like MobileNet which has faster inference times, but the classifier
-service might be using a UNet for classification which has slower inference
+service might be using a ResNet for classification which has slower inference
 times.
 
-In this case based on the requirements we can scale up the affected service as
-necessary. Now since the web component and the actual model serving solution
-communicate over the network, they could be scale up independently if necessary.
+As we already know, a system is only as fast as the slowest component in the
+system. So in this example, we would need to create more replicas of the ResNet
+classifier service.
 
-For instance, we might not choose to scale up the web component of a disease
-grader service, but we can increase the number of model replicas in the model
-serving solution instead (PyTorch serve for instance.) Also it is not necessary
-that the web components each have their unique instance of the model serving
-solution. They could all make requests to shared model serving solution
-instance.
+Now the model prediction endpoint and the web service communicate over the
+network. So they can be scaled independently if necessary. For instance, we
+might not choose to scale up the web component of a disease grader service, but
+we can increase the number of model replicas in the model serving solution
+instead (PyTorch serve for instance.) Also it is not necessary that the web
+components each have their unique instance of the model serving solution. They
+could all make requests to shared model serving solution instance.
 
 #### Support for multiple environments
 
-Now in this design itself, there is not strict requirement to specify that the
-services are containers, pod in k8s or simple linux processes. As long as they
-communicate with each other on the message queue, it doesn't matter where they
-run.
+Now in this design itself, we don't specify whether the services are
+containers, pods in k8s or simple linux processes. As long as they communicate
+with each other on the message queue, it doesn't matter where they run.
 
-This approach in turn allows us to pursue multi-cloud architectures where some
-components could be running on AWS, some on GCP some on Azure and so on. At the
-same time, this entire system could simply run on just a beefy laptop.
+This flexibility allows us to pursue multi-cloud architectures where different
+components could be running on different service clouds (some on GCP, some on
+AWS etc.). At the same time, this entire system could simply run on just a
+beefy laptop, albeit with some loss of throughput.
 
 ## Conclusion
 
