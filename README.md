@@ -243,11 +243,21 @@ data-structures from the `B-Tree` family
     number of records per segment, we can provide _O(1)_ reads for segmented_log(s).
     This would be possible because determining which segment has the index would
     also be a _O(1)_ in this case.
+    
+  <p align="center">
+  <img src="https://postgrespro.com/media/2019/05/23/i4_001.png" alt="B-Tree" />
+  </p>
+  <p align="center">
+  <b>Fig:</b> The <code>B-Tree</code> data-structure.
+  </p>
+  
+- `segmented_log` and `B-Tree` comparison continued ...
   - `segmented_log`(s) have far lesser number of memory indirections than
-  `B-Tree(s)` when simply sequentially iterating over the elements. (Tree have
-  multiple levels of pointer indirection). Higher number of indirections
-  increase the number of virtual memory page faults and decrease cache
-  locality.
+  `B-Tree(s)` when simply sequentially iterating over the elements. (Trees have
+  multiple levels of pointer indirection, as opposed to vectors which have 
+  contiguous memory allocation and are very cache-friendly). Higher number 
+  of memory indirections increase the number of virtual memory page faults and 
+  decrease cache locality.
   - `segmented_log`(s) have higher disk page locality. This due to segmented_log's
   append only nature where writes always go to the end of the files, which is
   optimal for disk page cache.
