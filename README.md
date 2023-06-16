@@ -522,14 +522,10 @@ inference services.
 
 ---
 
-#### License
-<sup>
+## License
+
 This document and all its figures are licensed under the
 <a href="./LICENSE">Creative Commons Zero v1.0 Universal</a> license.
-</sup>
 
-<br/>
+<img src="https://licensebuttons.net/l/zero/1.0/88x31.png" alt="cc0-v1.0"/>
 
-<sub>
-<img src="https://licensebuttons.net/l/zero/1.0/80x15.png" alt="cc0-v1.0"/>
-</sub>
