@@ -208,6 +208,14 @@ However message queues have some advantages over traditional data bases:
 - Message queues use different data structures for storage and indexing. Message
 queues use `segmented_log`(s), while traditional relational databases use 
 data-structures from the `B-Tree` family
+
+<p align="center">
+<img src="./assets/segmented-log.drawio.png" alt="segmented-log" />
+</p>
+<p align="center">
+<b>Fig:</b> The <code>segmented-log</code> data-structure.
+</p>
+
   - `segmented_log`(s) have _O(1)_ writes on average. B-Tree have _O(log n)_
   insertions.
     - In segmented_log appending to the `write_segment` is _O(1)_
