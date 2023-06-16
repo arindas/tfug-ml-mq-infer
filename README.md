@@ -531,5 +531,5 @@ This document and all its figures are licensed under the
 <br/>
 
 <sub>
-<img src="https://licensebuttons.net/l/zero/1.0/88x31.png" alt="cc0-v1.0"/>
+<img src="https://licensebuttons.net/l/zero/1.0/80x15.png" alt="cc0-v1.0"/>
 </sub>
