@@ -245,12 +245,12 @@ data-structures from the `B-Tree` family
     This would be possible because determining which segment has the index would
     also be a _O(1)_ in this case.
     
-  <p align="center">
-  <img src="https://postgrespro.com/media/2019/05/23/i4_001.png" alt="B-Tree" />
-  </p>
-  <p align="center">
-  <b>Fig:</b> The <code>B-Tree</code> data-structure.
-  </p>
+<p align="center">
+<img src="https://postgrespro.com/media/2019/05/23/i4_001.png" alt="B-Tree" />
+</p>
+<p align="center">
+<b>Fig:</b> The <code>B-Tree</code> data-structure.
+</p>
   
 - `segmented_log` and `B-Tree` comparison continued ...
   - `segmented_log`(s) have far lesser number of memory indirections than
