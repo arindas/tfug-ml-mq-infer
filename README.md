@@ -14,6 +14,12 @@ pdf_options:
 <h1 align="center">Message Queues: Function and Role in ML Inference</h1>
 </p>
 
+<p align="center" style="visibility: hidden">
+<i>
+Obtain the latest offline copy of this document <a href="https://github.com/arindas/tfug-ml-mq-infer/releases/latest/download/tfug-ml-mq-infer.pdf">here</a>.
+</i>
+</p>
+
 ## Introduction
 
 Let's first talk a bit about message queues.
