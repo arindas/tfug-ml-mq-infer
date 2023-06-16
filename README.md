@@ -216,6 +216,7 @@ data-structures from the `B-Tree` family
 <b>Fig:</b> The <code>segmented-log</code> data-structure.
 </p>
 
+- `segmented_log` and `B-Tree` comparison continued ...
   - `segmented_log`(s) have _O(1)_ writes on average. B-Tree have _O(log n)_
   insertions.
     - In segmented_log appending to the `write_segment` is _O(1)_
