@@ -357,8 +357,16 @@ The machine learning engineers provide the following models:
   classes.
 
 The software engineers design the solution with a suite of micro-services and
-drone controllers which communicate with each other using the message queue. The
-various components of the system are described below:
+drone controllers which communicate with each other using the message queue. 
+
+<p align="center">
+<img src="./assets/plant-pharma-case-study-solution-architecture.drawio.png" alt="plant-pharma-case-study-solution-architecture" />
+</p>
+<p align="center">
+<b>Fig:</b> Solution Architecture diagram.
+</p>
+
+The various components of the system are described in the following sections.
 
 #### Drone Image Collector
 
