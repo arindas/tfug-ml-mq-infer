@@ -538,7 +538,7 @@ inference services.
 ## License
 
 This document and all its figures are licensed under the
-<a href="./LICENSE">Creative Commons Zero v1.0 Universal</a> license.
+<a href="https://raw.githubusercontent.com/arindas/tfug-ml-mq-infer/main/LICENSE">Creative Commons Zero v1.0 Universal</a> license.
 
 <img src="./assets/cc-0-1.0.png" alt="cc0-v1.0"/>
 
