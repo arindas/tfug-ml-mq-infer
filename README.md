@@ -16,7 +16,8 @@ pdf_options:
 
 <p align="center" style="visibility: hidden">
 <i>
-Obtain the latest offline copy of this document <a href="https://github.com/arindas/tfug-ml-mq-infer/releases/latest/download/tfug-ml-mq-infer.pdf">here</a>.
+Obtain the latest offline copy of this document <a href="https://github.com/arindas/tfug-ml-mq-infer/releases/latest/download/tfug-ml-mq-infer.pdf">here</a>.<br/>
+Read the blog post for this talk here: <a href="https://arindas.github.io/blog/tfug-ml-mq-infer/">https://arindas.github.io/blog/tfug-ml-mq-infer/</a>
 </i>
 </p>
 
@@ -403,7 +404,7 @@ connectivity.)
 the message contains an image url, assume that the component also downloads the
 image from the url to it's local storage.
 
-Also the service might be use a shared persistent storage service to avoid
+Also the service might use a shared persistent storage service to avoid
 hitting S3 every time.)
 
 #### Leaf image cropper
